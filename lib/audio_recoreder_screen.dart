@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:reco/api/apis.dart';
 import 'package:reco/main.dart';
+import 'package:reco/upload_page.dart';
 import 'package:record/record.dart';
 
 class RecordingScreen extends StatefulWidget {
@@ -71,15 +72,23 @@ class _RecordingScreenState extends State<RecordingScreen> {
         _audioPath = path!;
 
         isLoad = true;
-
-        
       });
 
-       await ApiServices().sendAudioFile(_audioPath!);
+      final data = await ApiServices().sendAudioFile(_audioPath!);
 
-        valueNotifier.value = 90;
+      valueNotifier.value = 90;
 
-
+      if (context.mounted) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AudioUploadScreen(
+                gender: data!['gender'],
+                outPut: data!['prediction'],
+                prediction: data!['accuracy'].toString(),
+              ),
+            ));
+      }
 
       debugPrint('=========>>>>>> PATH: $_audioPath <<<<<<===========');
     } catch (e) {
@@ -114,27 +123,29 @@ class _RecordingScreenState extends State<RecordingScreen> {
     return Scaffold(
       backgroundColor: const Color(0xff032129),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton:  CustomRecordingButton(
-            isRecording: isRecording,
-            onPressed: () => _record(),
-          ),
+      floatingActionButton: CustomRecordingButton(
+        isRecording: isRecording,
+        onPressed: () => _record(),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(
-          color: Colors.white
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          'Record',
+          style: TextStyle(color: Colors.white, fontSize: 20),
         ),
-        title: Text('Record',style: TextStyle(color: Colors.white,fontSize: 20),),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        
         children: <Widget>[
-          isRecording ? const CustomRecordingWaveWidget() : Center(child: Text('just tap on button record your audio',style: TextStyle(color: Colors.white),)),
+          isRecording
+              ? const CustomRecordingWaveWidget()
+              : const Center(
+                  child: Text(
+                  'just tap on button record your audio',
+                  style: TextStyle(color: Colors.white),
+                )),
           const SizedBox(height: 16),
-
-          
-          
-         
         ],
       ),
     );
@@ -233,7 +244,6 @@ class _RecordingWaveWidgetState extends State<CustomRecordingWaveWidget> {
             decoration: BoxDecoration(
               color: const Color.fromARGB(255, 2, 255, 10),
               borderRadius: BorderRadius.circular(50),
-              
             ),
           );
         }).toList(),

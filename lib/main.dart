@@ -1,9 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:phone_state/phone_state.dart';
 import 'package:reco/audio_recoreder_screen.dart';
 import 'package:reco/welcome_screen.dart';
-
 
 final ValueNotifier<double> valueNotifier = ValueNotifier(0);
 
@@ -23,8 +21,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: PhoneState.nothing().status == PhoneStateStatus.NOTHING ? WelcomeScreen() : RecordingScreen(),
+      home: PhoneState.nothing().status == PhoneStateStatus.NOTHING
+          ? WelcomeScreen()
+          : RecordingScreen(),
     );
   }
 }
-

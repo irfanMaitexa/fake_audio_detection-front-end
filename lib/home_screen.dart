@@ -1,14 +1,10 @@
-import 'dart:collection';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:reco/api/apis.dart';
 import 'package:reco/audio_recoreder_screen.dart';
 import 'package:reco/main.dart';
 import 'package:reco/upload_page.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,12 +18,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final _apiServices = ApiServices();
 
-  Map<String,dynamic>  ? data;
+  Map<String, dynamic>? data;
 
   bool loading = false;
 
   void _checkAndRequestPermission() async {
     PermissionStatus status = await Permission.storage.status;
+
+    print(status);
 
     if (status != PermissionStatus.granted) {
       await Permission.storage.request();
@@ -52,47 +50,37 @@ class _HomeScreenState extends State<HomeScreen> {
 
         selectedFilePath = filePath;
 
-        try{
+        try {
+          data = await _apiServices.sendAudioFile(selectedFilePath!);
 
+          print(data);
 
-          data =   await _apiServices.sendAudioFile(selectedFilePath!);
+          if (data!['prediction'] == 'REAL') {
+            data!['accuracy'] = 95.0;
+          } else {
+            data!['accuracy'] = 0.0;
+          }
 
-         print(data);
+          valueNotifier.value = data!['accuracy'];
 
-         if(data!['prediction'] == 'REAL'){
+          setState(() {
+            loading = false;
+          });
 
-          data!['accuracy'] = 95.0;
-
-         }else{
-
-          data!['accuracy'] = 0.0;
-
-         }
-
-         
-
-        valueNotifier.value = data!['accuracy'];
-
-        setState(() {
-          loading = false;
-        });
-
-        if (context.mounted) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AudioUploadScreen(
-                  gender: data!['gender'],
-                  outPut: data!['prediction'],
-                  prediction: data!['accuracy'].toString(),
-
-                ),
-              ));
-        }
-
-        }catch(e){
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-
+          if (context.mounted) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AudioUploadScreen(
+                    gender: data!['gender'],
+                    outPut: data!['prediction'],
+                    prediction: data!['accuracy'].toString(),
+                  ),
+                ));
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(e.toString())));
         }
       } else {}
     } else {
@@ -158,40 +146,43 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    // Opacity(
-                    //   opacity: 1,
-                    //   child: Container(
-                    //     margin: const EdgeInsets.symmetric(horizontal: 20),
-                    //     padding: const EdgeInsets.all(10),
-                    //     decoration: BoxDecoration(
-                    //         color: const Color.fromARGB(92, 138, 138, 138),
-                    //         borderRadius: BorderRadius.circular(25)),
-                    //     child:  ListTile(
-                    //       onTap: () {
-                    //         Navigator.push(context, MaterialPageRoute(builder: (context) => RecordingScreen(),));
-                            
-                    //       },
-                    //       title: Text(
-                    //         'Record',
-                    //         style: TextStyle(
-                    //             color: Colors.white,
-                    //             fontSize: 18,
-                    //             fontWeight: FontWeight.w700),
-                    //       ),
-                    //       subtitle: Text(
-                    //         'Record your audio',
-                    //         style: TextStyle(color: Colors.white),
-                    //       ),
-                    //       trailing: Icon(
-                    //         Icons.record_voice_over,
-                    //         color: Colors.white,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    // const SizedBox(
-                    //   height: 30,
-                    // ),
+                    Opacity(
+                      opacity: 1,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(92, 138, 138, 138),
+                            borderRadius: BorderRadius.circular(25)),
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RecordingScreen(),
+                                ));
+                          },
+                          title: Text(
+                            'Record',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700),
+                          ),
+                          subtitle: Text(
+                            'Record your audio',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          trailing: Icon(
+                            Icons.record_voice_over,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
                     Opacity(
                       opacity: 1,
                       child: Container(
