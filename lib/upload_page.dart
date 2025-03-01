@@ -1,16 +1,21 @@
 import 'package:circular_seek_bar/circular_seek_bar.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:reco/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// ignore: must_be_immutable
 class AudioUploadScreen extends StatefulWidget {
-  const AudioUploadScreen({
-    super.key,
-    required this.gender,
-    required this.outPut,
-    required this.prediction,
-  });
+  AudioUploadScreen(
+      {super.key,
+      required this.gender,
+      required this.outPut,
+      required this.prediction});
 
   final String gender;
+
   final String outPut;
   final String prediction;
 
@@ -19,29 +24,13 @@ class AudioUploadScreen extends StatefulWidget {
 }
 
 class _AudioUploadScreenState extends State<AudioUploadScreen> {
-  final valueNotifier = ValueNotifier<double>(0.75); // Example progress value
-
-  // Function to make a phone call
-  void _makeEmergencyCall() async {
-    const emergencyNumber = 'tel:1930'; // Replace with your emergency number
-    if (await canLaunch(emergencyNumber)) {
-      await launch(emergencyNumber);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text(
-                'Unable to make a call. Please check your device settings.')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 8, 10, 15),
+      backgroundColor: const Color(0xff090b12),
       appBar: AppBar(
-        title: const Text(
-          'RESULT',
+        title: Text(
+          'Result',
           style: TextStyle(color: Colors.white, fontSize: 25),
         ),
         automaticallyImplyLeading: false,
@@ -49,7 +38,7 @@ class _AudioUploadScreenState extends State<AudioUploadScreen> {
         elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -82,36 +71,99 @@ class _AudioUploadScreenState extends State<AudioUploadScreen> {
               animation: true,
               valueNotifier: valueNotifier,
               child: Center(
-                child: Text(
-                  widget.outPut,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 40,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                child: Text('${widget.outPut}',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w700)),
+                //  ValueListenableBuilder(
+                //     valueListenable: valueNotifier,
+                //     builder: (_, double value, __) => Column(
+                //           mainAxisSize: MainAxisSize.min,
+                //           children: [
+                //             Text('${value.round()}%',
+                //                 style: TextStyle(color: Colors.white,fontSize: 40,fontWeight: FontWeight.w700)),
+                //             Text(widget.prediction,
+                //                 style: TextStyle(color: Colors.white,fontSize: 20)),
+                //           ],
+                //         )),
               ),
             ),
-            const SizedBox(height: 20),
+
             Container(
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(15),
-              ),
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(15)),
               child: ListTile(
-                leading: const Icon(
+                leading: Icon(
                   Icons.person,
                   color: Colors.white,
                   size: 50,
                 ),
                 title: Text(
-                  'The voice is ${widget.outPut}',
-                  style: const TextStyle(color: Colors.white),
+                  'The voice is  ${widget.outPut}',
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),
-            const SizedBox(height: 40),
+
+            SizedBox(height: 20),
+
+            Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(15)),
+              child: ListTile(
+                leading: Icon(
+                  Icons.person,
+                  color: Colors.white,
+                  size: 50,
+                ),
+                title: Text(
+                  'Gender  ${widget.gender.toUpperCase()}',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+
+            // Expanded(child: Column(
+            //   children: [
+
+            //     Expanded(
+            //       child: Container(
+            //         alignment: Alignment.center,
+            //         decoration: BoxDecoration(
+            //           border: Border.all(color: Colors.white),
+            //           borderRadius: BorderRadius.circular(15)
+            //         ),
+            //         child: ListTile(
+            //           leading: Icon(Icons.person,color: Colors.white,size: 50,),
+            //           title: Text(widget.gender,style: TextStyle(color: Colors.white),),
+            //         ),
+            //       ),
+            //     ),
+            //     SizedBox(height: 10,),
+            //     Expanded(
+            //       child: Container(
+            //         alignment: Alignment.center,
+            //         decoration: BoxDecoration(
+            //           border: Border.all(color: Colors.white),
+            //           borderRadius: BorderRadius.circular(15)
+            //         ),
+            //         child: ListTile(
+            //           leading: Icon(Icons.message,color: Colors.white,size: 50,),
+            //           title: Text(widget.outPut,style: TextStyle(color: Colors.white),),
+            //         ),
+            //       ),
+            //     ),
+            //     SizedBox(height: 10,)
+            //   ],
+            // ))
+            SizedBox(
+              height: 30,
+            ),
             ElevatedButton.icon(
               onPressed: _makeEmergencyCall,
               icon: const Icon(Icons.phone, color: Colors.white),
@@ -128,11 +180,10 @@ class _AudioUploadScreenState extends State<AudioUploadScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 90),
+            const SizedBox(height: 30),
             ElevatedButton.icon(
               onPressed: () {
-                Navigator.pop(context,
-                    '/C:\Users\Administrator\OneDrive\Desktop\project\fake_audio_detection-front-end\lib\home_screen.dart'); // Navigate back to the previous screen
+                Navigator.pop(context);
               },
               icon: const Icon(Icons.home, color: Colors.white),
               label: const Text(
@@ -152,5 +203,18 @@ class _AudioUploadScreenState extends State<AudioUploadScreen> {
         ),
       ),
     );
+  }
+
+  void _makeEmergencyCall() async {
+    const emergencyNumber = 'tel:1930'; // Replace with your emergency number
+    if (await canLaunch(emergencyNumber)) {
+      await launch(emergencyNumber);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'Unable to make a call. Please check your device settings.')),
+      );
+    }
   }
 }

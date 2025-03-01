@@ -1,5 +1,8 @@
+import 'dart:collection';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:reco/api/apis.dart';
 import 'package:reco/audio_recoreder_screen.dart';
@@ -24,8 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _checkAndRequestPermission() async {
     PermissionStatus status = await Permission.storage.status;
-
-    print(status);
 
     if (status != PermissionStatus.granted) {
       await Permission.storage.request();

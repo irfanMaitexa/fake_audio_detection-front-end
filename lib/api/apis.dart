@@ -15,7 +15,7 @@ class ApiServices {
     try {
       print('api call');
       Uri apiUrl = Uri.parse(
-          'https://2b9a-117-243-210-133.ngrok-free.app/predict'); // Replace with your actual API endpoint
+          'https://9b12-117-244-161-175.ngrok-free.app/predict'); // Replace with your actual API endpoint
       var request = http.MultipartRequest('POST', apiUrl);
 
       // Attach the audio file to the request
